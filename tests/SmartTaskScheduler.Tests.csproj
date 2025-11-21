@@ -18,6 +18,7 @@
 	<ItemGroup>
 		<!-- Правильная ссылка на библиотеку из папки src -->
 		<ProjectReference Include="..\src\Lab1_TaskScheduler\Lab1_TaskScheduler.csproj" />
+		<ProjectReference Include="..\src\Lab1_TaskScheduler\SmartTaskScheduler.Library.csproj" />
 	</ItemGroup>
 
 </Project>
