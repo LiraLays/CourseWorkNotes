@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11217.181 d18.0
+VisualStudioVersion = 18.0.11217.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartTaskScheduler.Interface", "WpfTaskScheduler\SmartTaskScheduler.Interface.csproj", "{30BB234E-FD44-4CA3-9F62-270D9BD391E6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartTaskScheduler.Tests", "..\tests\SmartTaskScheduler.Tests.csproj", "{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartTaskScheduler.Library", "Lab1_TaskScheduler\SmartTaskScheduler.Library.csproj", "{AE432A14-593D-397F-DBEF-994527653E18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartTaskScheduler.Tests", "..\tests\SmartTaskScheduler.Tests\SmartTaskScheduler.Tests.csproj", "{965EB8C0-DCA1-4869-886B-93D395C502EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,6 @@ Global
 		{30BB234E-FD44-4CA3-9F62-270D9BD391E6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{30BB234E-FD44-4CA3-9F62-270D9BD391E6}.Release|x64.ActiveCfg = Release|x64
 		{30BB234E-FD44-4CA3-9F62-270D9BD391E6}.Release|x64.Build.0 = Release|x64
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Debug|x64.Build.0 = Debug|Any CPU
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Release|x64.ActiveCfg = Release|Any CPU
-		{0D5FE45A-ECDD-4B3F-BB2B-4CEE47F56FE1}.Release|x64.Build.0 = Release|Any CPU
 		{AE432A14-593D-397F-DBEF-994527653E18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE432A14-593D-397F-DBEF-994527653E18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE432A14-593D-397F-DBEF-994527653E18}.Debug|x64.ActiveCfg = Debug|x64
@@ -41,6 +33,14 @@ Global
 		{AE432A14-593D-397F-DBEF-994527653E18}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AE432A14-593D-397F-DBEF-994527653E18}.Release|x64.ActiveCfg = Release|x64
 		{AE432A14-593D-397F-DBEF-994527653E18}.Release|x64.Build.0 = Release|x64
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Debug|x64.Build.0 = Debug|Any CPU
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Release|x64.ActiveCfg = Release|Any CPU
+		{965EB8C0-DCA1-4869-886B-93D395C502EE}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
