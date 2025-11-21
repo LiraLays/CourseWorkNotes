@@ -1,5 +1,5 @@
-using Lab1_TaskScheduler.Models;
-using Lab1_TaskScheduler.Services;
+using SmartTaskScheduler.Models;
+using SmartTaskScheduler.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

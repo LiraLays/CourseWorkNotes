@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lab1_TaskScheduler.Utils
+namespace SmartTaskScheduler.Utils
 {
 	public static class Guard
 	{

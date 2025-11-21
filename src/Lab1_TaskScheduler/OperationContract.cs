@@ -1,4 +1,4 @@
-﻿namespace Lab1_TaskScheduler.Contracts
+﻿namespace SmartTaskScheduler.Contracts
 {
 	public class OperationContract
 	{

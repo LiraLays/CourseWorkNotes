@@ -1,7 +1,7 @@
-﻿using Lab1_TaskScheduler.Models;
+﻿using SmartTaskScheduler.Models;
 using System.Collections.Generic;
 
-namespace Lab1_TaskScheduler.Services
+namespace SmartTaskScheduler.Services
 {
 	public interface ITaskSchedulerService
 	{

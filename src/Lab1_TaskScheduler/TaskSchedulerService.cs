@@ -1,11 +1,11 @@
-﻿using Lab1_TaskScheduler.Models;
-using Lab1_TaskScheduler.Utils;
+﻿using SmartTaskScheduler.Models;
+using SmartTaskScheduler.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Lab1_TaskScheduler.Services
+namespace SmartTaskScheduler.Services
 {
 	public class TaskSchedulerService : ITaskSchedulerService
 	{

@@ -1,7 +1,7 @@
 ﻿using WpfTaskScheduler.ViewModels;
-using Lab1_TaskScheduler.Services;
-using Lab1_TaskScheduler.Models;
-using Lab1_TaskScheduler.Contracts;
+using SmartTaskScheduler.Services;
+using SmartTaskScheduler.Models;
+using SmartTaskScheduler.Contracts;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Threading;
 using Microsoft.VisualBasic;
 using System.Windows.Input;
+
 namespace WpfTaskScheduler
 {
 	public partial class MainWindow : Window

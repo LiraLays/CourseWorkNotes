@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Lab1_TaskScheduler.Models
+namespace SmartTaskScheduler.Models
 {
 	public class TaskItem : INotifyPropertyChanged
 	{

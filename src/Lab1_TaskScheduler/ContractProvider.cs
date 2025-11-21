@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lab1_TaskScheduler.Contracts
+namespace SmartTaskScheduler.Contracts
 {
 	public static class ContractProvider
 	{
