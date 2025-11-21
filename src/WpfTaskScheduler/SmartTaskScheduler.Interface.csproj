@@ -9,8 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Lab1_TaskScheduler\Lab1_TaskScheduler.csproj" />
-		<ProjectReference Include="..\Lab1_TaskScheduler\SmartTaskScheduler.Library.csproj" />
+	  <ProjectReference Include="..\Lab1_TaskScheduler\SmartTaskScheduler.Library.csproj" />
 	</ItemGroup>
 
 </Project>

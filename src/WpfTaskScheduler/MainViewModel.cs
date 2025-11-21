@@ -1,8 +1,16 @@
 using SmartTaskScheduler.Models;
 using SmartTaskScheduler.Services;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Windows.Media.Effects;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Linq;
 
 namespace WpfTaskScheduler.ViewModels
 {
@@ -21,7 +29,20 @@ namespace WpfTaskScheduler.ViewModels
 			Tasks = new ObservableCollection<TaskItem>(_taskService.Tasks);
 		}
 
-		public ObservableCollection<TaskItem> Tasks { get; set; }
+        // Create a reusable glow effect that matches any stroke color
+
+        public DropShadowEffect CreateGlowEffect(System.Windows.Media.Color glowColor)
+        {
+            return new DropShadowEffect
+            {
+                ShadowDepth = 0,
+                BlurRadius = 100,
+                Opacity = 1.0,
+                Color = glowColor
+            };
+        }
+
+        public ObservableCollection<TaskItem> Tasks { get; set; }
 
 		public string PreConditionStatus
 		{
@@ -97,5 +118,9 @@ namespace WpfTaskScheduler.ViewModels
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
-	}
+    
+
+
+
+    }
 }
