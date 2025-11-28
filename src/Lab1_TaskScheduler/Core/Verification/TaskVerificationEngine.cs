@@ -14,7 +14,7 @@ namespace SmartTaskScheduler.Library.Core.Verification
         {
             var result = new VerificationResult();
 
-            // 1. Булева функция - парсинг условия
+            // 1. Булева функция - парсинг условия (Лаб. раб. 4)
             result.BooleanFunction = ParseBooleanFilter(filterFormula);
 
             // 2. Инвариант цикла фильтрации
@@ -28,6 +28,12 @@ namespace SmartTaskScheduler.Library.Core.Verification
             return result;
         }
 
+
+        /// <summary>
+        /// Проверка фильтра на наличие булевых функций (Лаб. раб. 4)
+        /// </summary>
+        /// <param name="formula">Формула в фильтре</param>
+        /// <returns>Булева функция, имеющаяся в фильтре</returns>
         private string ParseBooleanFilter(string formula)
         {
             if (string.IsNullOrEmpty(formula))
@@ -42,12 +48,24 @@ namespace SmartTaskScheduler.Library.Core.Verification
                 .Replace(" not ", " ¬ ");
         }
 
+        /// <summary>
+        /// Вычисление инварианта цикла фильтрации (Лаб. Раб. 3)
+        /// </summary>
+        /// <param name="tasks">Набор задач</param>
+        /// <returns>Результат, которому удовлетворяет цикл</returns>
         private string CreateFilterInvariant(IEnumerable<TaskItem> tasks)
         {
             var count = tasks.Count();
             return $"∀t ∈ result: t удовлетворяет условию фильтра ∧ |result| ≤ {count}";
         }
 
+        /// <summary>
+        /// WP-верификация
+        /// </summary>
+        /// <param name="filterCondition">Условие фильтрации</param>
+        /// <param name="byDeadline">Сортировка по дедлайну?</param>
+        /// <param name="byPriority">Сортировка по приоритету?</param>
+        /// <returns>Шаги рассчёта WP</returns>
         private List<string> CalculateWpSteps(string filterCondition, bool byDeadline, bool byPriority)
         {
             var steps = new List<string>
