@@ -1,12 +1,14 @@
 using SmartTaskScheduler.Library.Core.Models;
 using SmartTaskScheduler.Library.Core.Services;
 using SmartTaskScheduler.Library.Core.Verification;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace WpfTaskScheduler.ViewModels
 {
@@ -14,31 +16,77 @@ namespace WpfTaskScheduler.ViewModels
     {
         private readonly TaskSchedulerService _schedulerService;
         private string _currentFilter = "";
-        private bool _filterByDeadline = true;
-        private bool _filterByPriority = true;
+        private string _deadlineFilter = "";
+        private int _priorityFilter = 0;
+        private bool _filterByDeadline = false;
+        private bool _filterByPriority = false;
         private string _verificationLog = "";
         private string _newTaskTitle = "";
         private DateTime _newTaskDeadline = DateTime.Now.AddDays(1);
         private int _newTaskPriority = 2;
         private string _errorMessage = "";
+        private bool _isSuccessMessage = false;
+        private TaskItem _selectedTask;
 
         public MainViewModel()
         {
             _schedulerService = new TaskSchedulerService();
 
-            // Инициализация демо-данными
-            InitializeDemoData();
+            // Инициализация команд
+            AddNewTaskCommand = new RelayCommand(AddNewTask);
+            AddQuickTaskCommand = new RelayCommand(AddQuickTask);
+            MarkAsCompletedCommand = new RelayCommand<TaskItem>(MarkAsCompleted);
+            ShowVerificationDetailsCommand = new RelayCommand(ShowVerificationDetails);
+            ClearVerificationCommand = new RelayCommand(ClearVerification);
+
+            // Инициализация демо-данными (теперь загружаются из файла)
+            // InitializeDemoData();
+
+            // Инициализация сортировки
+            InitializeSorting();
 
             // Первоначальная фильтрация
             RefreshFilteredTasks();
         }
+
+        // Команды
+        public ICommand AddNewTaskCommand { get; }
+        public ICommand AddQuickTaskCommand { get; }
+        public ICommand MarkAsCompletedCommand { get; }
+        public ICommand ShowVerificationDetailsCommand { get; }
+        public ICommand ClearVerificationCommand { get; }
 
         // Коллекции для привязки
         public ObservableCollection<TaskItem> AllTasks { get; } = new ObservableCollection<TaskItem>();
         public ObservableCollection<TaskItem> FilteredTasks { get; } = new ObservableCollection<TaskItem>();
         public ObservableCollection<string> VerificationSteps { get; } = new ObservableCollection<string>();
 
+        // Свойство для отображения отсортированных задач
+        public ICollectionView AllTasksView => CollectionViewSource.GetDefaultView(AllTasks);
+
+        // Коллекция приоритетов
+        public ObservableCollection<PriorityItem> PriorityOptions { get; } = new ObservableCollection<PriorityItem>
+        {
+            new PriorityItem { Value = 1, DisplayName = "Не срочно" },
+            new PriorityItem { Value = 2, DisplayName = "Умеренно" },
+            new PriorityItem { Value = 3, DisplayName = "Срочно" },
+            new PriorityItem { Value = 4, DisplayName = "Крайне срочно" }
+        };
+
+        // Коллекция приоритетов фильтрации
+        public ObservableCollection<PriorityItem> PriorityFilterOptions { get; } = new ObservableCollection<PriorityItem>
+        {
+            new PriorityItem { Value = 0, DisplayName = "Все приоритеты" },
+            new PriorityItem { Value = 1, DisplayName = "Не срочно" },
+            new PriorityItem { Value = 2, DisplayName = "Умеренно" },
+            new PriorityItem { Value = 3, DisplayName = "Срочно" },
+            new PriorityItem { Value = 4, DisplayName = "Крайне срочно" }
+        };
+
+        
+
         // Свойства для новой задачи
+
         public string NewTaskTitle
         {
             get => _newTaskTitle;
@@ -68,6 +116,7 @@ namespace WpfTaskScheduler.ViewModels
             {
                 _newTaskPriority = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(PriorityDisplay)); // Уведомляем об изменении отображаемого текста
                 ClearErrorMessage();
             }
         }
@@ -79,8 +128,40 @@ namespace WpfTaskScheduler.ViewModels
             {
                 _errorMessage = value;
                 OnPropertyChanged();
+                // Опрелелаение типа сообщения
+                IsSuccessMessage = !string.IsNullOrEmpty(value) &&
+                                  (value.Contains("успешно") ||
+                                   value.Contains("добавлен") ||
+                                   value.Contains("выполнен") ||
+                                   value.Contains("Быстрая задача"));
             }
         }
+
+        public bool IsSuccessMessage
+        {
+            get => _isSuccessMessage;
+            set
+            {
+                _isSuccessMessage = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsErrorMessage)); // Уведомляем об изменении противоположного свойства
+            }
+        }
+
+        public bool IsErrorMessage => !string.IsNullOrEmpty(ErrorMessage) && !IsSuccessMessage;
+
+        public TaskItem SelectedTask
+        {
+            get => _selectedTask;
+            set
+            {
+                _selectedTask = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // Свойство для отображения текста приоритета
+        public string PriorityDisplay => PriorityOptions.FirstOrDefault(p => p.Value == NewTaskPriority)?.DisplayName;
 
         // Свойства для привязки к UI
         public string CurrentFilter
@@ -91,6 +172,36 @@ namespace WpfTaskScheduler.ViewModels
                 _currentFilter = value;
                 OnPropertyChanged();
                 RefreshFilteredTasks();
+            }
+        }
+
+        public string DeadlineFilter
+        {
+            get => _deadlineFilter;
+            set
+            {
+                _deadlineFilter = value;
+                OnPropertyChanged();
+                RefreshFilteredTasks();
+            }
+        }
+
+        public int PriorityFilter
+        {
+            get => _priorityFilter;
+            set
+            {
+                _priorityFilter = value;
+                OnPropertyChanged();
+                // Автоматическое включение фильтрации по приоритету при выборе значения
+                if (value > 0 && !FilterByPriority)
+                {
+                    FilterByPriority = true;
+                }
+                else
+                { 
+                    RefreshFilteredTasks();
+                }
             }
         }
 
@@ -112,6 +223,11 @@ namespace WpfTaskScheduler.ViewModels
             {
                 _filterByPriority = value;
                 OnPropertyChanged();
+                // Если выключили фильтрацию по приоритету - сбрасываем выбранный приоритет
+                if (!value)
+                {
+                    PriorityFilter = 0;
+                }
                 RefreshFilteredTasks();
             }
         }
@@ -126,27 +242,38 @@ namespace WpfTaskScheduler.ViewModels
             }
         }
 
-        // Команды для привязки к кнопкам
+        // Методы команд
+
+        private void InitializeSorting()
+        {
+            AllTasksView.SortDescriptions.Add(new SortDescription("IsCompleted", ListSortDirection.Ascending));
+            AllTasksView.SortDescriptions.Add(new SortDescription("Deadline", ListSortDirection.Ascending));
+        }
+
         public void AddNewTask()
         {
             if (!ValidateNewTask())
                 return;
 
-            try { 
+            try
+            {
                 var newTask = new TaskItem
                 {
-                    Title = $"Новая задача {AllTasks.Count + 1}",
+                    Title = NewTaskTitle,
                     Description = "Описание задачи",
-                    Deadline = DateTime.Now.AddDays(AllTasks.Count % 3), // Чередуем дедлайны
-                    Priority = (AllTasks.Count % 4) + 1 // Приоритеты 1-4
+                    Deadline = NewTaskDeadline,
+                    Priority = NewTaskPriority
                 };
 
                 if (_schedulerService.AddTask(newTask))
                 {
                     AllTasks.Add(newTask);
                     RefreshFilteredTasks();
+                    ResetNewTaskForm();
+                    ErrorMessage = "Задача успешно добавлена!";
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка: {ex.Message}";
             }
@@ -168,6 +295,7 @@ namespace WpfTaskScheduler.ViewModels
                 {
                     AllTasks.Add(newTask);
                     RefreshFilteredTasks();
+                    ErrorMessage = "Быстрая задача добавлена!";
                 }
             }
             catch (Exception ex)
@@ -182,6 +310,7 @@ namespace WpfTaskScheduler.ViewModels
             {
                 task.IsCompleted = true;
                 RefreshFilteredTasks();
+                ErrorMessage = $"Задача '{task.Title}' выполнена!";
             }
         }
 
@@ -193,10 +322,9 @@ namespace WpfTaskScheduler.ViewModels
 
                 VerificationSteps.Clear();
                 VerificationLog = $"Результат верификации:\n" +
-                                 $"Булева функция: {result.Verification.BooleanFunction}\n" +
-                                 $"Инвариант: {result.Verification.Invariant}\n" +
-                                 $"WP-результат: {result.Verification.WpResult}\n\n" +
-                                 $"Шаги расчета WP:";
+                                 $"Булева функция (Лаб. 4): {result.Verification.BooleanFunction}\n" +
+                                 $"Инвариант цикла (Лаб. 3): {result.Verification.Invariant}\n" +
+                                 $"WP-результат (Лаб. 2): {result.Verification.WpResult}";
 
                 foreach (var step in result.Verification.WpCalculation)
                 {
@@ -213,6 +341,7 @@ namespace WpfTaskScheduler.ViewModels
         {
             VerificationSteps.Clear();
             VerificationLog = "Верификация не выполнена";
+            ErrorMessage = "";
         }
 
         // Валидация
@@ -256,17 +385,20 @@ namespace WpfTaskScheduler.ViewModels
         }
 
         // Приватные методы
-        // Приватные методы
         private void RefreshFilteredTasks()
         {
             try
             {
-                var result = _schedulerService.FilterTasks(CurrentFilter, FilterByDeadline, FilterByPriority);
+                // Преобразование PriorityFilter обратно в строку для сервиса
+                string priorityFilterValue = _priorityFilter > 0 ? _priorityFilter.ToString() : "";
 
-                FilteredTasks.Clear();
+                var result = _schedulerService.FilterTasks(CurrentFilter, FilterByDeadline, FilterByPriority, DeadlineFilter, priorityFilterValue);
+
+                // Очистка AllTasks и добавляем только отфильтрованные задачи
+                AllTasks.Clear();
                 foreach (var task in result.FilteredTasks)
                 {
-                    FilteredTasks.Add(task);
+                    AllTasks.Add(task);
                 }
 
                 ShowVerificationDetails();
@@ -274,7 +406,7 @@ namespace WpfTaskScheduler.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = $"Ошибка фильтрации: {ex.Message}";
-                FilteredTasks.Clear();
+                AllTasks.Clear();
             }
         }
 
@@ -308,12 +440,12 @@ namespace WpfTaskScheduler.ViewModels
                 {
                     if (_schedulerService.AddTask(task))
                     {
+                        // Добавляем в AllTasks напрямую
                         AllTasks.Add(task);
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Игнорируем ошибки демо-данных
                     System.Diagnostics.Debug.WriteLine($"Ошибка добавления демо-задачи: {ex.Message}");
                 }
             }
@@ -324,6 +456,79 @@ namespace WpfTaskScheduler.ViewModels
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    // RelayCommand implementation
+    public class RelayCommand : ICommand
+    {
+        private readonly Action _execute;
+        private readonly Func<bool> _canExecute;
+
+        public RelayCommand(Action execute, Func<bool> canExecute = null)
+        {
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        public bool CanExecute(object parameter) => _canExecute?.Invoke() ?? true;
+        public void Execute(object parameter) => _execute();
+    }
+
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Action<T> _execute;
+        private readonly Func<T, bool> _canExecute;
+
+        public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
+        {
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        public bool CanExecute(object parameter) => _canExecute?.Invoke((T)parameter) ?? true;
+        public void Execute(object parameter) => _execute((T)parameter);
+    }
+
+    public class PriorityItem
+    {
+        public int Value { get; set; }
+        public string DisplayName { get; set; }
+    }
+
+    public class PriorityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is int priority)
+            {
+                return priority switch
+                {
+                    1 => "Не срочно",
+                    2 => "Умеренно",
+                    3 => "Срочно",
+                    4 => "Крайне срочно",
+                    _ => priority.ToString()
+                };
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

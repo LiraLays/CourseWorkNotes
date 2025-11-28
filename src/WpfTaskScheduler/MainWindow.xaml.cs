@@ -24,15 +24,14 @@ namespace WpfTaskScheduler
 		{
 			InitializeComponent();
 
-
-
+            _viewModel = new MainViewModel();
+            this.DataContext = _viewModel;
         }
 
-
-        private void checkBox_Checked_2(object sender, RoutedEventArgs e)
-        {
-			groupBox.Visibility = ((bool)checkBoxFiltr.IsChecked ? Visibility.Visible : Visibility.Collapsed) ;
-        }
+   //     private void checkBox_Checked_2(object sender, RoutedEventArgs e)
+   //     {
+			//groupBox.Visibility = ((bool)checkBoxFiltr.IsChecked ? Visibility.Visible : Visibility.Collapsed) ;
+   //     }
 
         private void checkBox_Checked_1(object sender, RoutedEventArgs e)
         {
