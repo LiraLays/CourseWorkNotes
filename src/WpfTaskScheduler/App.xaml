@@ -1371,7 +1371,7 @@
             <Setter Property="Background"
                     Value="Transparent" />
             <Setter Property="BorderBrush"
-                    Value="#FF859cff" />
+                    Value="LightGreen" />
             <Setter Property="BorderThickness"
                     Value="2" />
             <Setter Property="CornerRadius"

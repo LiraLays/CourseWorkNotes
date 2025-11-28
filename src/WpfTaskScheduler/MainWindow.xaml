@@ -12,7 +12,8 @@
         WindowState="Maximized"
         WindowStyle="SingleBorderWindow"
         ResizeMode="CanResizeWithGrip"
-        Topmost="True">
+        Topmost="True"
+        Icon="/icon-notepad.png">
     <Window.Resources>
         <!--<local:StringToVisibilityConverter x:Key="StringToVisibilityConverter" /> -->
         <local:PriorityConverter x:Key="PriorityConverter" />
