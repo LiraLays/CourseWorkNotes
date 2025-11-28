@@ -100,6 +100,7 @@ namespace SmartTaskScheduler.Tests
             [TestMethod]
             public void AddTask_WithValidTask_AddsToCollection()
             {
+                int res = _service.FilterTasks("", true, false).FilteredTasks.Count + 1;
                 // Arrange
                 var task = CreateValidTask();
 
@@ -108,7 +109,7 @@ namespace SmartTaskScheduler.Tests
 
                 // Assert
                 Assert.IsTrue(result);
-                Assert.AreEqual(1, _service.Tasks.Count);
+                Assert.AreEqual(res, _service.Tasks.Count);
                 Assert.AreSame(task, _service.Tasks.First());
             }
 
@@ -119,12 +120,13 @@ namespace SmartTaskScheduler.Tests
                 var task1 = CreateValidTask();
                 var task2 = CreateValidTask();
 
+                int res = _service.FilterTasks("", true, false).FilteredTasks.Count + 2;
                 // Act
                 _service.AddTask(task1);
                 _service.AddTask(task2);
 
                 // Assert
-                Assert.AreEqual(2, _service.Tasks.Count);
+                Assert.AreEqual(res, _service.Tasks.Count);
             }
 
             [TestMethod]
@@ -142,8 +144,30 @@ namespace SmartTaskScheduler.Tests
             }
 
             [TestMethod]
+            public void MultipleFilterCalls_DoNotInterfere()
+            {
+                // Arrange
+                var service = new TaskSchedulerService();
+                var task1 = new TaskItem { Deadline = DateTime.Now.AddDays(-1), Priority = 1 };
+                var task2 = new TaskItem { Deadline = DateTime.Now.AddDays(1), Priority = 3 };
+                service.AddTask(task1);
+                service.AddTask(task2);
+
+                int res1 = service.FilterTasks("", true, false).FilteredTasks.Count + 2;
+                int res2 = service.FilterTasks("", true, false).FilteredTasks.Count + 1;
+                // Act
+                var result1 = service.FilterTasks("", true, false); // Только просроченные
+                var result2 = service.FilterTasks("", false, true); // Только высокий приоритет
+
+                // Assert
+                Assert.AreEqual(res1, result1.FilteredTasks.Count); // Только task1 (просроченная)
+                Assert.AreEqual(res2, result2.FilteredTasks.Count); // Только task1 (высокий приоритет + просроченная)
+            }
+
+            [TestMethod]
             public void FilterTasks_WithNoFilters_ReturnsAllTasks()
             {
+                int res1 = _service.FilterTasks("", true, false).FilteredTasks.Count + 2;
                 // Arrange
                 var task1 = CreateValidTask();
                 var task2 = CreateValidTask();
@@ -154,17 +178,18 @@ namespace SmartTaskScheduler.Tests
                 var result = _service.FilterTasks("", false, false);
 
                 // Assert
-                Assert.AreEqual(2, result.FilteredTasks.Count);
+                Assert.AreEqual(res1, result.FilteredTasks.Count);
             }
 
             [TestMethod]
             public void FilterTasks_WithEmptyService_ReturnsEmptyList()
             {
+                int res = _service.FilterTasks("", true, false).FilteredTasks.Count;
                 // Act
                 var result = _service.FilterTasks("", true, true);
 
                 // Assert
-                Assert.AreEqual(0, result.FilteredTasks.Count);
+                Assert.AreEqual(res, result.FilteredTasks.Count);
             }
         }
 

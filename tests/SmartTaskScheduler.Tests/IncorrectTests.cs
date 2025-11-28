@@ -24,7 +24,7 @@ namespace SmartTaskScheduler.Tests
 
                 // Act & Assert - ЗАВЕДОМО НЕВЕРНОЕ УТВЕРЖДЕНИЕ
                 vm.AddNewTask(); // Должен был сработать Validation
-                Assert.AreEqual(0, vm.AllTasks.Count); // Но мы утверждаем что задача не добавилась
+                Assert.AreEqual(1, vm.AllTasks.Count); // Но мы утверждаем что задача не добавилась
                 // НА САМОМ ДЕЛЕ: задача не должна добавляться из-за валидации в AddNewTask()
             }
 
@@ -54,25 +54,6 @@ namespace SmartTaskScheduler.Tests
                 vm.AddNewTask(); // Должен был сработать Validation
                 Assert.AreEqual(1, vm.AllTasks.Count); // Но мы утверждаем что задача добавилась
                 // НА САМОМ ДЕЛЕ: задача не должна добавляться из-за валидации в AddNewTask()
-            }
-        }
-
-        // ===== НЕПРАВИЛЬНЫЕ ТЕСТЫ ДЛЯ СЕРВИСА (через ViewModel) =====
-        [TestClass]
-        public class IncorrectServiceViaViewModelTests
-        {
-            [TestMethod]
-            public void MainViewModel_AddQuickTask_CreatesInvalidTasks() // НЕПРАВИЛЬНО!
-            {
-                // Arrange
-                var vm = new MainViewModel();
-
-                // Act
-                vm.AddQuickTask(); // Использует автоматическую генерацию
-
-                // Assert - ЗАВЕДОМО НЕВЕРНОЕ УТВЕРЖДЕНИЕ
-                Assert.IsTrue(string.IsNullOrEmpty(vm.AllTasks[0].Title)); // Утверждаем что создалась задача с пустым названием
-                // НА САМОМ ДЕЛЕ: AddQuickTask создает задачи с валидными данными
             }
         }
 
